@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <el-button type="primary" @click="handleAddTask">新建任务</el-button>
+    <a href="http://localhost:9003/tasks/file">下载附件</a>
     <el-table :data="taskList" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="任务编号" width="220">
         <template slot-scope="scope">
@@ -24,7 +25,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <!-- <el-button type="primary" size="small" @click="handleEdit(scope)">编辑</el-button> -->
+          <el-button v-show="see(scope.row.status)" type="primary" size="small" @click="doing(scope)">开始</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
         </template>
       </el-table-column>
@@ -69,7 +70,7 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { addTask,listTask,deleteTaskById } from '@/api/task'
+import { addTask,listTask,deleteTaskById,doing } from '@/api/task'
 
 // const defaultRole = {
 //   key: '',
@@ -81,6 +82,7 @@ import { addTask,listTask,deleteTaskById } from '@/api/task'
 export default {
   data() {
     return {
+      
       taskList:[],//[{id:1,name:'haha'},{id:2,name:'hehe'}],
       task:{},
       // role: Object.assign({}, defaultRole),
@@ -99,6 +101,7 @@ export default {
     // routesData() {
     //   return this.routes
     // }
+    
   },
   created() {
     listTask().then(response => {
@@ -111,6 +114,9 @@ export default {
     // this.getRoles()
   },
   methods: {
+    see(status){
+      return status == 0;
+    },
     // async getRoutes() {
     //   const res = await getRoutes()
     //   this.serviceRoutes = res.data
@@ -259,6 +265,11 @@ export default {
       //     `,
       //   type: 'success'
       // })
+    },
+    doing({$index, row}){
+      doing(row.id).then((response) => {
+            this.taskList[$index].status = 1;
+      });
     },
     // // reference: src/view/layout/components/Sidebar/SidebarItem.vue
     // onlyOneShowingChild(children = [], parent) {

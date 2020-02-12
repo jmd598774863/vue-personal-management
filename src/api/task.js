@@ -25,3 +25,10 @@ export function addTask(task) {
     data:task
   })
 }
+export function doing(id) {
+  return request({
+    baseURL: 'http://localhost:9003',
+    url: '/tasks/doing/'+id,
+    method: 'post',
+  })
+}
