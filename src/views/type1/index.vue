@@ -104,6 +104,10 @@ export default {
     
   },
   created() {
+
+   
+
+
     listTask().then(response => {
         this.taskList = response.data;
       }).catch(err => {
@@ -241,12 +245,9 @@ export default {
         const jsonData = (JSON.stringify(tempData));
         addTask(jsonData).then((response) => {
             // this.list.unshift(this.task)
-            var new_task = {id:response.data,
-                            project:this.task.project,
-                            taskName:this.task.taskName};
-
-
-                            
+            var new_task = Object.assign({}, this.task);
+            new_task.id = response.data;
+            new_task.status = 0;
             this.taskList.push(new_task);
             this.task = {};
         })
