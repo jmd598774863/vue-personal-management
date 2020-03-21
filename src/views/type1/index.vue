@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <el-button type="primary" @click="handleAddTask">新建任务</el-button>
-    <a href="http://localhost:9003/tasks/file">下载附件</a>
     <el-table :data="taskList" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="任务编号" width="220">
         <template slot-scope="scope">
@@ -20,12 +19,15 @@
       </el-table-column>
       <el-table-column align="center" label="状态" width="220">
         <template slot-scope="scope">
-          {{ scope.row.status }}
+          <img width='80' height='70' v-show='scope.row.status==0' :src='sleep_img'/>
+          <img width='80' height='70' v-show='scope.row.status==1' :src='run_img'/>
+          <img width='80' height='70' v-show='scope.row.status==2' :src='finish_img'/>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button v-show="see(scope.row.status)" type="primary" size="small" @click="doing(scope)">开始</el-button>
+          <el-button v-show="scope.row.status==0" type="primary" size="small" @click="doing(scope)">开始</el-button>
+          <el-button v-show="scope.row.status==1" type="success" size="small" @click="finished(scope)">完成</el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">删除</el-button>
         </template>
       </el-table-column>
@@ -70,8 +72,10 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { addTask,listTask,deleteTaskById,doing } from '@/api/task'
-
+import { addTask,listTask,deleteTaskById,doing,finished } from '@/api/task'
+import sleep_img from '@/assets/sleep.gif'
+import run_img from '@/assets/run.jpg'
+import finish_img from '@/assets/finish.gif'
 // const defaultRole = {
 //   key: '',
 //   name: '',
@@ -82,7 +86,9 @@ import { addTask,listTask,deleteTaskById,doing } from '@/api/task'
 export default {
   data() {
     return {
-      
+      sleep_img:sleep_img,
+      run_img:run_img,
+      finish_img:finish_img,
       taskList:[],//[{id:1,name:'haha'},{id:2,name:'hehe'}],
       task:{},
       // role: Object.assign({}, defaultRole),
@@ -118,9 +124,6 @@ export default {
     // this.getRoles()
   },
   methods: {
-    see(status){
-      return status == 0;
-    },
     // async getRoutes() {
     //   const res = await getRoutes()
     //   this.serviceRoutes = res.data
@@ -270,6 +273,11 @@ export default {
     doing({$index, row}){
       doing(row.id).then((response) => {
             this.taskList[$index].status = 1;
+      });
+    },
+    finished({$index, row}){
+      finished(row.id).then((response) => {
+            this.taskList[$index].status = 2;
       });
     },
     // // reference: src/view/layout/components/Sidebar/SidebarItem.vue

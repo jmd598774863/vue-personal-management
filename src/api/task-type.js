@@ -1,8 +1,8 @@
-import request from '@/utils/request'
-
+import request from '@/utils/request';
+import {url} from '@/const/constant';
 export function fetchList(query) {
   return request({
-    baseURL: 'http://localhost:9003',
+    baseURL: url,
     url: '/tasks/tasks',
     method: 'get',
     params: query
